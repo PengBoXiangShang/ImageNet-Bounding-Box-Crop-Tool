@@ -41,6 +41,7 @@ for directory in get_immediate_subdirectories(rootdir):	#loop over all dirs
 					ymax = int (root.find('object').find('bndbox').find('ymax').text)
 					img =  Image.open( os.path.join(directory, filename) )
 					cropped = img.crop((xmin, ymin, xmax, ymax))
+					cropped = cropped.resize((256, 256)) # added by Peng, on 25-04-2018.
 					save_file = open (os.path.join(CroppedFolder, directory, filename), 'w')
 					cropped.save(os.path.join(CroppedFolder, directory, filename), "JPEG")
 					save_file.close()
