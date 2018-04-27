@@ -33,15 +33,34 @@ for directory in get_immediate_subdirectories(rootdir):	#loop over all dirs
 				basename =  os.path.splitext(filename)[0]
 				try:
 					file = open ( os.path.join( Annotation, directory, basename))
+					# added by Peng, on 27-04-2018.
+					print basename
+					print '-------'
+					print type(basename)
+					raise RuntimeError
 					root = ET.fromstring(file.read())
 					file.close()
 					xmin = int (root.find('object').find('bndbox').find('xmin').text)
 					ymin = int (root.find('object').find('bndbox').find('ymin').text)
 					xmax = int (root.find('object').find('bndbox').find('xmax').text)
 					ymax = int (root.find('object').find('bndbox').find('ymax').text)
+
+					# comment by Peng, on 27-04-2018.
+					# https://docs.python.org/2/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element.find
+					# find(match) Finds the first subelement matching match. match may be a tag name or path. Returns an element instance or None.
+					# added by Peng, on 27-04-2018
+					object_name = root.find('object').find('name').text
+					print object_name
+					print "-----------"
+					category_name = basename.split('_', 1)[0]
+					print category_name
+					raise RuntimeError
+					if object_name != category_name:
+						continue
+
 					img =  Image.open( os.path.join(directory, filename) )
 					cropped = img.crop((xmin, ymin, xmax, ymax))
-					cropped = cropped.resize((256, 256)) # added by Peng, on 25-04-2018.
+					cropped = cropped.resize((224, 224)) # added by Peng, on 25-04-2018.
 					save_file = open (os.path.join(CroppedFolder, directory, filename), 'w')
 					cropped.save(os.path.join(CroppedFolder, directory, filename), "JPEG")
 					save_file.close()
